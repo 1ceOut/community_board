@@ -46,4 +46,9 @@ public class PostingController {
         return postingService.updatePosting(postingId, postingEntity);
     }
 
+    @GetMapping("/posting/detail")
+    public List<PostingEntity> findByPostingId(String postingId) {
+        return postingService.findByPostingId(postingId);
+    }
+
 }

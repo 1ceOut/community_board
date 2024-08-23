@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import java.io.PipedInputStream;
 import java.util.List;
+import java.util.Optional;
 
 
 public interface PostingRepository extends MongoRepository<PostingEntity, String>{
@@ -19,7 +20,8 @@ public interface PostingRepository extends MongoRepository<PostingEntity, String
     //이름으로 조회
     List<PostingEntity> findByTitle(String title);
 
-
+    //_id로 조회
+    List<PostingEntity> findByPostingId(String postingId);
 
 
 }

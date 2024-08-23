@@ -27,6 +27,10 @@ public class PostingService {
     public List<PostingEntity> getAllPosting() {
         return postingRepository.findAll();
     }
+    //_id로 조회
+    public List<PostingEntity> findByPostingId(String postingId) {
+        return postingRepository.findByPostingId(postingId);
+    }
     //이름으로 조회
     public List<PostingEntity> findByTitle(String title) {
         return postingRepository.findByTitle(title);
@@ -55,6 +59,8 @@ public class PostingService {
             mongoTemplate.save(existingPosting);
             return existingPosting;
         }
+
         return null;
     }
+
 }
