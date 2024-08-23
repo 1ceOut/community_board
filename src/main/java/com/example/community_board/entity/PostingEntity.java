@@ -19,7 +19,7 @@ import java.time.LocalDate;
 public class PostingEntity {
 
     @Id
-    private String posting_id;
+    private String postingId;
     @Field
     private String title; // 레시피 이름
     @Field
