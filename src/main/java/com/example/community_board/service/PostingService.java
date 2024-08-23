@@ -34,7 +34,7 @@ public class PostingService {
 
     @Autowired
     private MongoTemplate mongoTemplate;
-
+    //수정
     public PostingEntity updatePosting(String postingId, PostingEntity postingEntity) {
         Query query = new Query(Criteria.where("postingId").is(postingId));
         PostingEntity existingPosting = mongoTemplate.findOne(query, PostingEntity.class);
