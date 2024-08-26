@@ -20,7 +20,7 @@ import java.util.Map;
 public class PostingEntity {
 
     @Id
-    private String postingId;
+    private String postingId; //굳이 하는게 있다고
     @Field
     private String title; // 레시피 이름
     @Field
