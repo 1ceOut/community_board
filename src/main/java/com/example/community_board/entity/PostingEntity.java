@@ -7,8 +7,9 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
-
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
 
 
 @Document(collection = "posting")
@@ -48,5 +49,6 @@ public class PostingEntity {
     private String recipe_id; // 레시피아이디
     @Field
     private String thumbnail; // 썸네일
-
+    @Field
+    private List<Map<String, String>> steps; // 레시피 단계들
 }
