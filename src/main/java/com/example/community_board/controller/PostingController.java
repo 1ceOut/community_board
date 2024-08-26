@@ -13,7 +13,6 @@ import java.util.Objects;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(origins = {"http://localhost:8080","https://reacticeout.icebuckwheat.kro.kr"})
 public class PostingController {
 
     @Autowired
