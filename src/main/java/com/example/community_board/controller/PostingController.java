@@ -13,9 +13,6 @@ import java.util.Objects;
 
 @RestController
 @RequestMapping("/api")
-//@CrossOrigin(origins = {"http://localhost:8080","http://reacticeout.icebuckwheat.kro.kr"}) // CORS 설정 (필요에 따라 조정)
-
-
 public class PostingController {
 
     @Autowired
