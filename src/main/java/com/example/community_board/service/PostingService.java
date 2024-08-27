@@ -1,14 +1,15 @@
 package com.example.community_board.service;
 
-import com.example.community_board.entity.PostingEntity;
+import com.example.community_board.client.UserClient;
+import com.example.community_board.dto.UseKafkaDto;
 import com.example.community_board.dto.UserDto;
+import com.example.community_board.entity.PostingEntity;
 import com.example.community_board.repository.PostingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
-import com.example.community_board.client.UserClient;
 
 import java.util.List;
 import java.util.Map;
@@ -26,8 +27,18 @@ public class PostingService {
     @Autowired
     private UserClient userClient; // Feign 클라이언트 주입
 
+    //kafka setting
+    @Autowired
+    private KafkaService kafkaService;
+
     public void insertPosting(PostingEntity postingEntity) {
         postingRepository.save(postingEntity);
+        System.out.println(postingEntity.getPostingId());
+        //kafka 메세지 전송
+        kafkaService.kafkaSend(UseKafkaDto.builder()
+                .posting_id(postingEntity.getPostingId())
+                .sender(postingEntity.getUser_id())
+                .build());
     }
 
     public void deletePosting(String postingId) {
