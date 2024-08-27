@@ -37,7 +37,7 @@ public class PostingService {
         //kafka 메세지 전송
         kafkaService.kafkaSend(UseKafkaDto.builder()
                 .posting_id(postingEntity.getPostingId())
-                .sender(postingEntity.getUser_id())
+                .sender(postingEntity.getUserId())
                 .build());
     }
 

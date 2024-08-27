@@ -18,7 +18,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
-//@CrossOrigin(origins = {"http://localhost:8080", "https://api.icebuckwheat.kro.kr"}, allowCredentials = "true")
+@CrossOrigin(origins = {"http://localhost:8080", "https://api.icebuckwheat.kro.kr"}, allowCredentials = "true")
 public class PostingController {
 
     @Autowired
@@ -105,5 +105,10 @@ public class PostingController {
     @GetMapping("/posting/listWithUser")
     public List<Map<String, Object>> getPostWithUserDetails() {
         return postingService.getPostWithUserDetails(); // 포스팅과 유저 정보를 결합하여 반환
+    }
+
+    @GetMapping("/posting/listByUser")
+    public List<Map<String, Object>> getPostByUserDetails(@RequestParam String user_id) {
+        return postingService.getPostByUserDetails(user_id);
     }
 }
