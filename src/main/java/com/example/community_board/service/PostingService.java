@@ -1,46 +1,53 @@
 package com.example.community_board.service;
 
 import com.example.community_board.entity.PostingEntity;
+import com.example.community_board.dto.UserDto;
 import com.example.community_board.repository.PostingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
+import com.example.community_board.client.UserClient;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class PostingService {
 
     @Autowired
     private PostingRepository postingRepository;
-    //추가
+
+    @Autowired
+    private MongoTemplate mongoTemplate;
+
+    @Autowired
+    private UserClient userClient; // Feign 클라이언트 주입
+
     public void insertPosting(PostingEntity postingEntity) {
         postingRepository.save(postingEntity);
     }
-    //삭제
+
     public void deletePosting(String postingId) {
         postingRepository.deleteById(postingId);
     }
-    //전체게시물 조회
+
     public List<PostingEntity> getAllPosting() {
         return postingRepository.findAll();
     }
-    //_id로 조회
-    public List<PostingEntity> findByPostingId(String postingId) {
-        return postingRepository.findByPostingId(postingId);
+
+    public PostingEntity findByPostingId(String postingId) {
+        return postingRepository.findByPostingId(postingId).orElse(null); // Optional을 처리하여 null 반환
     }
-    //이름으로 조회
+
     public List<PostingEntity> findByTitle(String title) {
         return postingRepository.findByTitle(title);
     }
 
-    @Autowired
-    private MongoTemplate mongoTemplate;
-    //수정
     public PostingEntity updatePosting(String postingId, PostingEntity postingEntity) {
-        Query query = new Query(Criteria.where("postingId").is(postingId));
+        Query query = new Query(Criteria.where("_id").is(postingId));
         PostingEntity existingPosting = mongoTemplate.findOne(query, PostingEntity.class);
 
         if (existingPosting != null) {
@@ -63,4 +70,27 @@ public class PostingService {
         return null;
     }
 
+    public UserDto getUserInfo(String userId) {
+        return userClient.getUserInfo(userId); // Feign 클라이언트를 통해 사용자 정보 조회
+    }
+
+    // 포스팅과 유저 정보를 결합하여 반환하는 메소드
+    public List<Map<String, Object>> getPostWithUserDetails() {
+        List<PostingEntity> postings = postingRepository.findAll();
+        // 유저 정보 캐시를 위한 Map
+        Map<String, UserDto> userCache = postings.stream()
+                .map(PostingEntity::getUser_id)
+                .distinct()
+                .collect(Collectors.toMap(userId -> userId, userId -> userClient.getUserInfo(userId)));
+
+        // 포스팅과 유저 정보를 결합
+        return postings.stream().map(post -> {
+            UserDto user = userCache.get(post.getUser_id());
+            return Map.of(
+                    "posting", post,
+                    "userName", user != null ? user.getName() : "Unknown User",
+                    "userProfile", user != null ? user.getPhoto() : "/assets/cha.png"
+            );
+        }).collect(Collectors.toList());
+    }
 }

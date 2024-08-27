@@ -2,26 +2,23 @@ package com.example.community_board.repository;
 
 import com.example.community_board.entity.PostingEntity;
 import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import java.io.PipedInputStream;
 import java.util.List;
 import java.util.Optional;
 
+@Repository
+public interface PostingRepository extends MongoRepository<PostingEntity, String> {
 
-public interface PostingRepository extends MongoRepository<PostingEntity, String>{
-    //삭제
+    // 삭제
     void deleteById(String postingId);
 
-    //모든게시물 조회
+    // 모든 게시물 조회
     List<PostingEntity> findAll();
 
-    //이름으로 조회
+    // 제목으로 조회
     List<PostingEntity> findByTitle(String title);
 
-    //_id로 조회
-    List<PostingEntity> findByPostingId(String postingId);
-
-
+    // 게시물 ID로 조회 (Optional 사용)
+    Optional<PostingEntity> findByPostingId(String postingId);
 }
