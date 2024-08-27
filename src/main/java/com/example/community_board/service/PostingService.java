@@ -79,13 +79,13 @@ public class PostingService {
         List<PostingEntity> postings = postingRepository.findAll();
         // 유저 정보 캐시를 위한 Map
         Map<String, UserDto> userCache = postings.stream()
-                .map(PostingEntity::getUser_id)
+                .map(PostingEntity::getUserId)
                 .distinct()
                 .collect(Collectors.toMap(userId -> userId, userId -> userClient.getUserInfo(userId)));
 
         // 포스팅과 유저 정보를 결합
         return postings.stream().map(post -> {
-            UserDto user = userCache.get(post.getUser_id());
+            UserDto user = userCache.get(post.getUserId());
             return Map.of(
                     "posting", post,
                     "userName", user != null ? user.getName() : "Unknown User",
@@ -97,7 +97,7 @@ public class PostingService {
     public List<Map<String, Object>> getPostByUserDetails(String user_id) {
         UserDto user = userClient.getUserInfo(user_id);
 
-        List<PostingEntity> postings = postingRepository.findByUser_id(user_id);
+        List<PostingEntity> postings = postingRepository.findByUserId(user_id);
 
         return postings.stream().map(post -> Map.of(
                 "posting", post,

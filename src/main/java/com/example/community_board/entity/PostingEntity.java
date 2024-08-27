@@ -43,8 +43,8 @@ public class PostingEntity {
     private int views; //조회수
     @Field
     private float grade; // 댓글에 달린 평점 기반 산정 결과
-    @Field
-    private String user_id; // 유저아이디
+    @Field("user_id")
+    private String userId; // 유저아이디
     @Field
     private String recipe_id; // 레시피아이디
     @Field
