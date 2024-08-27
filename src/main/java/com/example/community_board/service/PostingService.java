@@ -93,4 +93,16 @@ public class PostingService {
             );
         }).collect(Collectors.toList());
     }
+
+    public List<Map<String, Object>> getPostByUserDetails(String user_id) {
+        UserDto user = userClient.getUserInfo(user_id);
+
+        List<PostingEntity> postings = postingRepository.findByUser_id(user_id);
+
+        return postings.stream().map(post -> Map.of(
+                "posting", post,
+                "userName", user != null ? user.getName() : "Unknown User",
+                "userProfile", user != null ? user.getPhoto() : "/assets/cha.png"
+        )).collect(Collectors.toList());
+    }
 }
