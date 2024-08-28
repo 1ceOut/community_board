@@ -11,13 +11,13 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
 public class PostingService {
-
     @Autowired
     private PostingRepository postingRepository;
 
@@ -27,14 +27,15 @@ public class PostingService {
     @Autowired
     private UserClient userClient; // Feign 클라이언트 주입
 
-    //kafka setting
     @Autowired
     private KafkaService kafkaService;
+
+    private Map<String, UserDto> userCache = new HashMap<>(); // 유저 정보를 캐싱할 변수
 
     public void insertPosting(PostingEntity postingEntity) {
         postingRepository.save(postingEntity);
         System.out.println(postingEntity.getPostingId());
-        //kafka 메세지 전송
+        // kafka 메세지 전송
         kafkaService.kafkaSend(UseKafkaDto.builder()
                 .posting_id(postingEntity.getPostingId())
                 .sender(postingEntity.getUserId())
@@ -50,7 +51,7 @@ public class PostingService {
     }
 
     public PostingEntity findByPostingId(String postingId) {
-        return postingRepository.findByPostingId(postingId).orElse(null); // Optional을 처리하여 null 반환
+        return postingRepository.findByPostingId(postingId).orElse(null);
     }
 
     public List<PostingEntity> findByTitle(String title) {
@@ -62,6 +63,7 @@ public class PostingService {
         PostingEntity existingPosting = mongoTemplate.findOne(query, PostingEntity.class);
 
         if (existingPosting != null) {
+            // Update fields if they are present
             if (postingEntity.getTitle() != null) existingPosting.setTitle(postingEntity.getTitle());
             if (postingEntity.getContents() != null) existingPosting.setContents(postingEntity.getContents());
             if (postingEntity.getTags() != null) existingPosting.setTags(postingEntity.getTags());
@@ -81,22 +83,31 @@ public class PostingService {
         return null;
     }
 
-    public UserDto getUserInfo(String userId) {
-        return userClient.getUserInfo(userId); // Feign 클라이언트를 통해 사용자 정보 조회
+    private void loadAllUsers() {
+        if (userCache.isEmpty()) {
+            List<UserDto> users = userClient.getAllUsers();
+            userCache = users.stream()
+                    .collect(Collectors.toMap(UserDto::getUserId, user -> user));
+        }
     }
 
-    // 포스팅과 유저 정보를 결합하여 반환하는 메소드
+    public UserDto getUserInfo(String userId) {
+        loadAllUsers(); // 유저 정보를 미리 로드
+        return userCache.getOrDefault(userId, null);
+    }
+
+    public List<UserDto> getAllUsers() {
+        // 유저 정보를 로드하여 반환
+        loadAllUsers();
+        return userCache.values().stream().collect(Collectors.toList());
+    }
+
     public List<Map<String, Object>> getPostWithUserDetails() {
         List<PostingEntity> postings = postingRepository.findAll();
-        // 유저 정보 캐시를 위한 Map
-        Map<String, UserDto> userCache = postings.stream()
-                .map(PostingEntity::getUserId)
-                .distinct()
-                .collect(Collectors.toMap(userId -> userId, userId -> userClient.getUserInfo(userId)));
+        loadAllUsers(); // 유저 정보를 미리 로드
 
-        // 포스팅과 유저 정보를 결합
         return postings.stream().map(post -> {
-            UserDto user = userCache.get(post.getUserId());
+            UserDto user = getUserInfo(post.getUserId());
             return Map.of(
                     "posting", post,
                     "userName", user != null ? user.getName() : "Unknown User",
@@ -105,10 +116,10 @@ public class PostingService {
         }).collect(Collectors.toList());
     }
 
-    public List<Map<String, Object>> getPostByUserDetails(String user_id) {
-        UserDto user = userClient.getUserInfo(user_id);
+    public List<Map<String, Object>> getPostByUserDetails(String userId) {
+        UserDto user = getUserInfo(userId);
 
-        List<PostingEntity> postings = postingRepository.findByUserId(user_id);
+        List<PostingEntity> postings = postingRepository.findByUserId(userId);
 
         return postings.stream().map(post -> Map.of(
                 "posting", post,
