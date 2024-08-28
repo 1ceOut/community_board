@@ -106,4 +106,9 @@ public class PostingController {
     public List<Map<String, Object>> getPostWithUserDetails() {
         return postingService.getPostWithUserDetails(); // 포스팅과 유저 정보를 결합하여 반환
     }
+
+    @GetMapping("/posting/listByUser")
+    public List<Map<String, Object>> getPostByUserDetails(@RequestParam String user_id) {
+        return postingService.getPostByUserDetails(user_id);
+    }
 }

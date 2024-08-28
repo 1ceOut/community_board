@@ -21,4 +21,6 @@ public interface PostingRepository extends MongoRepository<PostingEntity, String
 
     // 게시물 ID로 조회 (Optional 사용)
     Optional<PostingEntity> findByPostingId(String postingId);
+
+    List<PostingEntity> findByUserId(String userId);
 }
