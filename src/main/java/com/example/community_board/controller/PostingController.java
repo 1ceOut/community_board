@@ -3,7 +3,7 @@ package com.example.community_board.controller;
 import com.example.community_board.entity.PostingEntity;
 import com.example.community_board.dto.UserDto;
 import com.example.community_board.service.PostingService;
-import com.example.community_board.storage.NcpObjectStorageService;
+import storage.NcpObjectStorageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,7 +18,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
-//@CrossOrigin(origins = {"http://localhost:8080", "https://api.icebuckwheat.kro.kr"}, allowCredentials = "true")
+@CrossOrigin(origins = {"http://localhost:8080", "https://api.icebuckwheat.kro.kr"}, allowCredentials = "true")
 public class PostingController {
 
     @Autowired

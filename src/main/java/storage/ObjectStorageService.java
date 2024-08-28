@@ -1,4 +1,4 @@
-package com.example.community_board.storage;
+package storage;
 
 import org.springframework.web.multipart.MultipartFile;
 
