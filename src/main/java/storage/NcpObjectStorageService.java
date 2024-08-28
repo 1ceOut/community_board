@@ -1,4 +1,4 @@
-package com.example.community_board.storage;
+package storage;
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
