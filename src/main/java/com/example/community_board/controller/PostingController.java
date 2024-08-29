@@ -3,13 +3,13 @@ package com.example.community_board.controller;
 import com.example.community_board.entity.PostingEntity;
 import com.example.community_board.dto.UserDto;
 import com.example.community_board.service.PostingService;
-import storage.NcpObjectStorageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import storage.NcpObjectStorageService;
 
 import java.util.HashMap;
 import java.util.List;
@@ -18,7 +18,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
-//@CrossOrigin(origins = {"http://localhost:8080", "https://api.icebuckwheat.kro.kr"}, allowCredentials = "true")
+@CrossOrigin(origins = {"http://localhost:8080", "https://api.icebuckwheat.kro.kr"}, allowCredentials = "true")
 public class PostingController {
 
     @Autowired
@@ -43,7 +43,7 @@ public class PostingController {
         return ResponseEntity.ok("Posting inserted successfully.");
     }
 
-    @GetMapping("/posting/delete")
+    @DeleteMapping("/posting/delete")
     public ResponseEntity<String> deletePosting(@RequestParam("postingId") String postingId) {
         try {
             PostingEntity postingEntity = postingService.findByPostingId(postingId);
@@ -123,7 +123,17 @@ public class PostingController {
 
     @GetMapping("/users")
     public ResponseEntity<List<UserDto>> getAllUsers() {
-        List<UserDto> users = postingService.getAllUsers(); // 모든 사용자 정보를 반환하는 서비스 메서드
+        List<UserDto> users = postingService.getAllUsers();
         return ResponseEntity.ok(users);
+    }
+
+    @GetMapping("/posting/detailWithUser")
+    public ResponseEntity<Map<String, Object>> findPostWithUserDetails(@RequestParam("postingId") String postingId) {
+        Map<String, Object> postWithUserDetails = postingService.findPostWithUserDetails(postingId);
+        if (postWithUserDetails != null) {
+            return ResponseEntity.ok(postWithUserDetails);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
     }
 }
