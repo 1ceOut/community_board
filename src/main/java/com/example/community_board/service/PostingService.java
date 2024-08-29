@@ -25,17 +25,15 @@ public class PostingService {
     private MongoTemplate mongoTemplate;
 
     @Autowired
-    private UserClient userClient; // Feign 클라이언트 주입
+    private UserClient userClient;
 
     @Autowired
     private KafkaService kafkaService;
 
-    private Map<String, UserDto> userCache = new HashMap<>(); // 유저 정보를 캐싱할 변수
+    private Map<String, UserDto> userCache = new HashMap<>();
 
     public void insertPosting(PostingEntity postingEntity) {
         postingRepository.save(postingEntity);
-        System.out.println(postingEntity.getPostingId());
-        // kafka 메세지 전송
         kafkaService.kafkaSend(UseKafkaDto.builder()
                 .posting_id(postingEntity.getPostingId())
                 .sender(postingEntity.getUserId())
@@ -63,7 +61,6 @@ public class PostingService {
         PostingEntity existingPosting = mongoTemplate.findOne(query, PostingEntity.class);
 
         if (existingPosting != null) {
-            // Update fields if they are present
             if (postingEntity.getTitle() != null) existingPosting.setTitle(postingEntity.getTitle());
             if (postingEntity.getContents() != null) existingPosting.setContents(postingEntity.getContents());
             if (postingEntity.getTags() != null) existingPosting.setTags(postingEntity.getTags());
@@ -79,7 +76,6 @@ public class PostingService {
             mongoTemplate.save(existingPosting);
             return existingPosting;
         }
-
         return null;
     }
 
@@ -92,19 +88,18 @@ public class PostingService {
     }
 
     public UserDto getUserInfo(String userId) {
-        loadAllUsers(); // 유저 정보를 미리 로드
+        loadAllUsers();
         return userCache.getOrDefault(userId, null);
     }
 
     public List<UserDto> getAllUsers() {
-        // 유저 정보를 로드하여 반환
         loadAllUsers();
         return userCache.values().stream().collect(Collectors.toList());
     }
 
     public List<Map<String, Object>> getPostWithUserDetails() {
         List<PostingEntity> postings = postingRepository.findAll();
-        loadAllUsers(); // 유저 정보를 미리 로드
+        loadAllUsers();
 
         return postings.stream().map(post -> {
             UserDto user = getUserInfo(post.getUserId());
@@ -118,7 +113,6 @@ public class PostingService {
 
     public List<Map<String, Object>> getPostByUserDetails(String userId) {
         UserDto user = getUserInfo(userId);
-
         List<PostingEntity> postings = postingRepository.findByUserId(userId);
 
         return postings.stream().map(post -> Map.of(
@@ -126,5 +120,20 @@ public class PostingService {
                 "userName", user != null ? user.getName() : "Unknown User",
                 "userProfile", user != null ? user.getPhoto() : "/assets/cha.png"
         )).collect(Collectors.toList());
+    }
+
+    // 새로운 메서드 추가: postingId에 맞는 게시물과 사용자 정보를 가져오는 메서드
+    public Map<String, Object> findPostWithUserDetails(String postingId) {
+        PostingEntity post = findByPostingId(postingId);
+        if (post == null) {
+            return null; // 게시물이 없는 경우 null 반환
+        }
+
+        UserDto user = getUserInfo(post.getUserId());
+        return Map.of(
+                "posting", post,
+                "userName", user != null ? user.getName() : "Unknown User",
+                "userProfile", user != null ? user.getPhoto() : "/assets/cha.png"
+        );
     }
 }

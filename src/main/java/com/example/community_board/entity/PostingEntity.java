@@ -8,6 +8,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -36,7 +37,7 @@ public class PostingEntity {
     @Field
     private byte amount; // 인원수단위
     @Field
-    private LocalDate writeday; // 등록일자
+    private LocalDateTime writeday; // 등록일자
     @Field
     private int likes; // 좋아요..?
     @Field

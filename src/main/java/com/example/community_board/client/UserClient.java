@@ -7,9 +7,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
-@FeignClient(name = "userClient", url = "https://api.icebuckwheat.kro.kr/api/login/getalluser")
+@FeignClient(name = "userClient", url = "https://api.icebuckwheat.kro.kr")
 public interface UserClient {
 
-    @GetMapping
+    @GetMapping("/api/login/getalluser")
     List<UserDto> getAllUsers();
 }
