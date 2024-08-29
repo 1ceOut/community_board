@@ -72,6 +72,10 @@ public class PostingService {
             if (postingEntity.getLikes() != 0) existingPosting.setLikes(postingEntity.getLikes());
             if (postingEntity.getViews() != 0) existingPosting.setViews(postingEntity.getViews());
             if (postingEntity.getGrade() != 0) existingPosting.setGrade(postingEntity.getGrade());
+            if (postingEntity.getUserId() != null) existingPosting.setUserId(postingEntity.getUserId());
+            if (postingEntity.getRecipe_id() != null) existingPosting.setRecipe_id(postingEntity.getRecipe_id());
+            if (postingEntity.getThumbnail() != null) existingPosting.setThumbnail(postingEntity.getThumbnail());
+            if (postingEntity.getSteps() != null) existingPosting.setSteps(postingEntity.getSteps());
 
             mongoTemplate.save(existingPosting);
             return existingPosting;
@@ -136,4 +140,6 @@ public class PostingService {
                 "userProfile", user != null ? user.getPhoto() : "/assets/cha.png"
         );
     }
+
+
 }
