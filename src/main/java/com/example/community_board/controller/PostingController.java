@@ -21,6 +21,7 @@ import java.util.Map;
 //@CrossOrigin(origins = {"http://localhost:8080", "https://api.icebuckwheat.kro.kr"}, allowCredentials = "true")
 public class PostingController {
 
+
     @Autowired
     private PostingService postingService;
 
