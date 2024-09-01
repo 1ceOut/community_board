@@ -1,6 +1,7 @@
 package com.example.community_board.service;
 
 import com.example.community_board.client.UserClient;
+import com.example.community_board.dto.UpdateDto;
 import com.example.community_board.dto.UseKafkaDto;
 import com.example.community_board.dto.UserDto;
 import com.example.community_board.entity.PostingEntity;
@@ -56,29 +57,30 @@ public class PostingService {
         return postingRepository.findByTitle(title);
     }
 
-    public PostingEntity updatePosting(String postingId, PostingEntity postingEntity) {
+    public UpdateDto updatePosting(String postingId, UpdateDto updateDto) {
         Query query = new Query(Criteria.where("_id").is(postingId));
         PostingEntity existingPosting = mongoTemplate.findOne(query, PostingEntity.class);
 
         if (existingPosting != null) {
-            if (postingEntity.getTitle() != null) existingPosting.setTitle(postingEntity.getTitle());
-            if (postingEntity.getContents() != null) existingPosting.setContents(postingEntity.getContents());
-            if (postingEntity.getTags() != null) existingPosting.setTags(postingEntity.getTags());
-            if (postingEntity.getUsed() != null) existingPosting.setUsed(postingEntity.getUsed());
-            if (postingEntity.getDiff() != 0) existingPosting.setDiff(postingEntity.getDiff());
-            if (postingEntity.getTime() != 0) existingPosting.setTime(postingEntity.getTime());
-            if (postingEntity.getAmount() != 0) existingPosting.setAmount(postingEntity.getAmount());
-            if (postingEntity.getWriteday() != null) existingPosting.setWriteday(postingEntity.getWriteday());
-            if (postingEntity.getLikes() != 0) existingPosting.setLikes(postingEntity.getLikes());
-            if (postingEntity.getViews() != 0) existingPosting.setViews(postingEntity.getViews());
-            if (postingEntity.getGrade() != 0) existingPosting.setGrade(postingEntity.getGrade());
-            if (postingEntity.getUserId() != null) existingPosting.setUserId(postingEntity.getUserId());
-            if (postingEntity.getRecipe_id() != null) existingPosting.setRecipe_id(postingEntity.getRecipe_id());
-            if (postingEntity.getThumbnail() != null) existingPosting.setThumbnail(postingEntity.getThumbnail());
-            if (postingEntity.getSteps() != null) existingPosting.setSteps(postingEntity.getSteps());
+            if (updateDto.getTitle() != null) existingPosting.setTitle(updateDto.getTitle());
+            if (updateDto.getContents() != null) existingPosting.setContents(updateDto.getContents());
+            if (updateDto.getTags() != null) existingPosting.setTags(updateDto.getTags());
+            if (updateDto.getWriteday() != null) existingPosting.setWriteday(updateDto.getWriteday());
+            if (updateDto.getUserId() != null) existingPosting.setUserId(updateDto.getUserId());
+            if (updateDto.getThumbnail() != null) existingPosting.setThumbnail(updateDto.getThumbnail());
+            if (updateDto.getSteps() != null) existingPosting.setSteps(updateDto.getSteps());
 
             mongoTemplate.save(existingPosting);
-            return existingPosting;
+
+            return new UpdateDto(
+                    existingPosting.getContents(),
+                    existingPosting.getTitle(),
+                    existingPosting.getTags(),
+                    existingPosting.getUserId(),
+                    existingPosting.getSteps(),
+                    existingPosting.getWriteday(),
+                    existingPosting.getThumbnail()
+            );
         }
         return null;
     }
@@ -126,11 +128,10 @@ public class PostingService {
         )).collect(Collectors.toList());
     }
 
-    // 새로운 메서드 추가: postingId에 맞는 게시물과 사용자 정보를 가져오는 메서드
     public Map<String, Object> findPostWithUserDetails(String postingId) {
         PostingEntity post = findByPostingId(postingId);
         if (post == null) {
-            return null; // 게시물이 없는 경우 null 반환
+            return null;
         }
 
         UserDto user = getUserInfo(post.getUserId());
@@ -140,6 +141,4 @@ public class PostingService {
                 "userProfile", user != null ? user.getPhoto() : "/assets/cha.png"
         );
     }
-
-
 }

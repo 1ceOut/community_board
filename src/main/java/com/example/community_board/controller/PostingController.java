@@ -1,5 +1,6 @@
 package com.example.community_board.controller;
 
+import com.example.community_board.dto.UpdateDto;
 import com.example.community_board.entity.PostingEntity;
 import com.example.community_board.dto.UserDto;
 import com.example.community_board.service.PostingService;
@@ -18,10 +19,8 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
-//@CrossOrigin(origins = {"http://localhost:8080", "https://api.icebuckwheat.kro.kr"}, allowCredentials = "true")
+@CrossOrigin(origins = {"http://localhost:8080", "https://api.icebuckwheat.kro.kr"}, allowCredentials = "true")
 public class PostingController {
-
-
     @Autowired
     private PostingService postingService;
 
@@ -81,8 +80,12 @@ public class PostingController {
     }
 
     @PutMapping("/posting/update/{postingId}")
-    public ResponseEntity<PostingEntity> updatePosting(@PathVariable String postingId, @RequestBody PostingEntity postingEntity) {
-        PostingEntity updatedPosting = postingService.updatePosting(postingId, postingEntity);
+    public ResponseEntity<UpdateDto> updatePosting(@PathVariable String postingId,
+                                                   @RequestBody UpdateDto updateDto) {
+        System.out.println("PostingId: " + postingId);
+        System.out.println("UpdateDto: " + updateDto);
+
+        UpdateDto updatedPosting = postingService.updatePosting(postingId, updateDto);
         if (updatedPosting != null) {
             return ResponseEntity.ok(updatedPosting);
         } else {
