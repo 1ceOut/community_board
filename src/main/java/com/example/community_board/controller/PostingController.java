@@ -125,7 +125,7 @@ public class PostingController {
         return ResponseEntity.ok(postsByUserDetails);
     }
 
-    @GetMapping("/users")
+    @GetMapping("/posting/users")
     public ResponseEntity<List<UserDto>> getAllUsers() {
         List<UserDto> users = postingService.getAllUsers();
         return ResponseEntity.ok(users);
