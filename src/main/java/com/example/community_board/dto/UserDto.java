@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
@@ -14,5 +15,6 @@ public class UserDto {
     private String userId;
     private String name;
     private String photo;
+    private LocalDateTime writeday;
 
 }
