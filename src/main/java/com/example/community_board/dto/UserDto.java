@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.kafka.common.protocol.types.Field;
 
 import java.time.LocalDateTime;
 
@@ -16,6 +17,8 @@ public class UserDto {
     private String userId;
     private String name;
     private String photo;
+    private boolean broadcast;
     private LocalDateTime writeday;
+
 
 }
