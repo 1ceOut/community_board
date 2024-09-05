@@ -6,7 +6,6 @@ import com.example.community_board.dto.UseKafkaDto;
 import com.example.community_board.dto.UserDto;
 import com.example.community_board.entity.PostingEntity;
 import com.example.community_board.repository.PostingRepository;
-import org.apache.kafka.common.protocol.types.Field;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -90,7 +89,6 @@ public class PostingService {
         List<UserDto> users = userClient.getAllUsers();
         userCache = users.stream()
                 .collect(Collectors.toMap(UserDto::getUserId, user -> user));
-
     }
 
     public UserDto getUserInfo(String userId) {
@@ -141,6 +139,4 @@ public class PostingService {
                 "userProfile", user != null ? user.getPhoto() : "/assets/cha.png"
         );
     }
-
-
 }
