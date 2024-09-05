@@ -90,7 +90,6 @@ public class PostingService {
         List<UserDto> users = userClient.getAllUsers();
         userCache = users.stream()
                 .collect(Collectors.toMap(UserDto::getUserId, user -> user));
-
     }
 
     public UserDto getUserInfo(String userId) {
